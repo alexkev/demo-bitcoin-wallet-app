@@ -34,7 +34,6 @@ export default function HomeScreen() {
             icon="paperplane.fill"
             size="sm"
             fullWidth={false}
-            variant="rectangular"
           />
         </View>
       </View>

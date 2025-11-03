@@ -26,7 +26,7 @@ export function Button({
   icon,
   iconSize,
   iconColor = Colors.light.icon,
-  variant = 'rounded',
+  variant = 'rectangular',
   size = 'md',
   fullWidth = true,
   backgroundColor = Colors.light.tint,
