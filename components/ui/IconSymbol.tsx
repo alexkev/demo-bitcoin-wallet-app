@@ -21,7 +21,8 @@ const MAPPING = {
   'bitcoinsign.circle.fill': 'currency-bitcoin',
   'arrow.down.left': 'call-received',
   'arrow.up.right': 'call-made',
-} as IconMapping;
+  'arrow.up.right.square': 'open-in-new',
+} as IconMapping; 
 
 /**
  * An icon component that uses native SF Symbols on iOS, and Material Icons on Android and web.

@@ -56,6 +56,7 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, onPress 
         </View>
       </View>
       <View style={styles.transactionRight}>
+        <IconSymbol name="arrow.up.right.square" size={16} color={Colors.light.text } style={{ marginBottom: 8 }} />
         <Text style={[styles.transactionAmount, { color: iconColor }]}>
           {amount} BTC
         </Text>
