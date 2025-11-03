@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { AvailableBalance } from "@/components/wallet/AvailableBalance";
+import { useBitcoinPrice } from "@/hooks/useBitcoinPrice";
 import { useTheme } from "@/hooks/useTheme";
 import { useWalletStore } from "@/stores/useWalletStore";
 import { formatBitcoinAmount, isValidBitcoinAddress, validateBitcoinAmount } from "@/utils/bitcoinValidation";
@@ -46,7 +47,8 @@ export const SendBitcoin = () => {
   const { colors } = useTheme();
 
   // Get wallet data from Zustand store
-  const { calculateBalance, canSendAmount, getNetworkFee, usdRate, addTransaction } = useWalletStore();
+  const { calculateBalance, canSendAmount, getNetworkFee, addTransaction } = useWalletStore();
+  const { price: usdRate } = useBitcoinPrice();
   const balance = calculateBalance();
   const networkFee = getNetworkFee();
 

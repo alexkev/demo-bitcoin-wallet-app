@@ -41,12 +41,14 @@
     "react-native-screens": "~4.10.0",
     "react-native-web": "~0.20.0",
     "react-native-webview": "13.13.5",
+    "swr": "^2.3.6",
     "tiny-secp256k1": "^2.2.3",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
     "@rozenite/metro": "^1.0.0-alpha.16",
+    "@rozenite/network-activity-plugin": "^1.0.0-alpha.16",
     "@types/react": "~19.0.10",
     "eslint": "^9.25.0",
     "eslint-config-expo": "~9.2.0",

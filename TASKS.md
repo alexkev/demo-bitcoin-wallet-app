@@ -30,20 +30,17 @@
 
 ### Transaction Details & Polish
 - [x] Create transaction detail modal for tap interactions
-- [ ] Improve styling and user feedback
+- [x] Improve styling and user feedback
   - Update Home screen styling
   - Add yellow fold theme
   - Update Send screen styling
-  - Update transaction detail modal styling
-  - Implement smooth transitions and animations
 - [x] Add proper error states and validation messages
 - [ ] Add coin animations (success/failure states)
 
 ### Reusable Components & Final Touch
 - [ ] Extract common button and input components
 - [ ] Test complete flow and fix bugs
-- [ ] Optimize FlashList performance
-  - [ ] add FlashList by shopify for transaction list
+- [ ] add FlashList by shopify for transaction list
 
 ## Bonus Graph of Current bitcoin prices
 - [ ] Implement a line graph showing bitcoin price trends using react-native-svg-charts
@@ -52,3 +49,5 @@
 
 TODO
 - implement MMKV persistence for zustand store
+-   - Update transaction detail modal styling
+-     - Implement smooth transitions and animations

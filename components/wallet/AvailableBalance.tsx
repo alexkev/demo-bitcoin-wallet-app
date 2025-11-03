@@ -1,10 +1,12 @@
+import { useBitcoinPrice } from '@/hooks/useBitcoinPrice';
 import { useTheme } from '@/hooks/useTheme';
 import { useWalletStore } from '@/stores/useWalletStore';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 
 export function AvailableBalance() {
-  const { usdRate, calculateBalance } = useWalletStore();
+  const { calculateBalance } = useWalletStore();
+  const { price: usdRate } = useBitcoinPrice();
   const balance = calculateBalance();
 
   const { colors } = useTheme();

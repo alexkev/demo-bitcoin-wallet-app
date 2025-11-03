@@ -23,14 +23,12 @@ const zustandStorage: StateStorage = {
 type WalletStore = {
   transactions: Transaction[];
   balance: number;
-  usdRate: number;
   
   // Actions
   addTransaction: (transaction: Omit<Transaction, 'id' | 'timestamp'>) => void;
   calculateBalance: () => number;
   canSendAmount: (amount: number) => boolean;
   getNetworkFee: () => number;
-  updateUsdRate: (rate: number) => void;
   initializeTransactions: () => void;
 };
 
@@ -39,7 +37,6 @@ export const useWalletStore = create<WalletStore>()(
     (set, get) => ({
       transactions: MOCK_TRANSACTIONS,
       balance: 0,
-      usdRate: 30000, // Default BTC/USD rate
       
       addTransaction: (transaction) => {
         const newTransaction: Transaction = {
@@ -79,10 +76,6 @@ export const useWalletStore = create<WalletStore>()(
       },
       
       getNetworkFee: () => NETWORK_FEE,
-      
-      updateUsdRate: (rate: number) => {
-        set({ usdRate: rate });
-      },
       
       initializeTransactions: () => {
         const balance = get().calculateBalance();

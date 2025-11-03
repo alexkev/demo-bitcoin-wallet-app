@@ -27,6 +27,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          animation: 'shift',
           title: "Wallet",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="bitcoinsign.circle.fill" color={color} />
@@ -36,6 +37,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="send"
         options={{
+          animation: 'shift',
           title: "Send",
           tabBarIcon: ({ color }) => (
             <IconSymbol size={28} name="paperplane.fill" color={color} />
