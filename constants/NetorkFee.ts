@@ -1,0 +1,1 @@
+export const NETWORK_FEE = 0.00001;
