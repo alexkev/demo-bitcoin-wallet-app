@@ -1,4 +1,3 @@
-import { Colors } from '@/constants/Colors';
 import { useTheme } from '@/hooks/useTheme';
 import { useWalletStore } from '@/stores/useWalletStore';
 import React from 'react';
@@ -8,7 +7,7 @@ export function AvailableBalance() {
   const { usdRate, calculateBalance } = useWalletStore();
   const balance = calculateBalance();
 
-  const colors = useTheme();
+  const { colors } = useTheme();
   
   const usdValue = (balance * usdRate).toLocaleString('en-US', {
     style: 'currency',
@@ -17,14 +16,14 @@ export function AvailableBalance() {
 
   return (
     <View style={styles.balanceContainer}>
-      <Text style={styles.label}>Available Balance</Text>
+      <Text style={[styles.label, { color: colors.icon }]}>Available Balance</Text>
       <View style={styles.amountRow}>
-        <Text style={styles.balance}>{balance.toFixed(8)}</Text>
-        <Text style={styles.currency}> BTC</Text>
+        <Text style={[styles.balance, { color: colors.text }]}>{balance.toFixed(8)}</Text>
+        <Text style={[styles.currency, { color: colors.icon }]}> BTC</Text>
       </View>
       <View style={{flexDirection: 'row'}}>
-        <Text style={styles.fiatValue}>≈ {usdValue}</Text>
-        <Text style={styles.usCurrency}> USD</Text>
+        <Text style={[styles.fiatValue, { color: colors.icon }]}>≈ {usdValue}</Text>
+        <Text style={[styles.usCurrency, { color: colors.icon }]}> USD</Text>
       </View>
     </View>
   );
@@ -38,7 +37,6 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    color: Colors.light.icon,
     marginBottom: 8,
   },
   amountRow: {
@@ -52,15 +50,12 @@ const styles = StyleSheet.create({
   currency: {
     fontSize: 12,
     fontWeight: "500",
-    color: Colors.light.icon,
   },
   usCurrency: {
     fontSize: 10,
     fontWeight: "500",
-    color: Colors.light.icon,
   },
   fiatValue: {
     fontSize: 16,
-    color: Colors.light.icon,
   },
 });
