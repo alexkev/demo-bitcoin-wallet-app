@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/Button";
 import { AvailableBalance } from "@/components/wallet/AvailableBalance";
-import { Colors } from "@/constants/Colors";
+import { useTheme } from "@/hooks/useTheme";
 import { useWalletStore } from "@/stores/useWalletStore";
 import { formatBitcoinAmount, isValidBitcoinAddress, validateBitcoinAmount } from "@/utils/bitcoinValidation";
 import { router } from "expo-router";
@@ -41,6 +41,9 @@ export const SendBitcoin = () => {
   const [address, setAddress] = useState("");
   const [amountError, setAmountError] = useState("");
   const [addressError, setAddressError] = useState("");
+
+  // Get theme colors
+  const { colors } = useTheme();
 
   // Get wallet data from Zustand store
   const { calculateBalance, canSendAmount, getNetworkFee, usdRate, addTransaction } = useWalletStore();
@@ -159,67 +162,69 @@ export const SendBitcoin = () => {
   const isFormValid = amountValidation.isValid && isAddressValid && amount && address && !amountError && !addressError;
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={[styles.navBar]}>
         <TouchableOpacity 
           style={styles.backButton}
           onPress={() => router.back()}
         >
-          <Text style={styles.backButtonText}>‹ Back</Text>
+          <Text style={[styles.backButtonText, { color: colors.text }]}>‹ Back</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>Send Bitcoin</Text>
+        <Text style={[styles.title, { color: colors.text }]}>Send Bitcoin</Text>
         <View style={styles.rightSpace} />
       </View>
       <View style={{flex: 1, justifyContent: "flex-start"}}>
         <AvailableBalance />
         <View style={styles.form}>
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Amount (BTC)</Text>
+            <Text style={[styles.label, { color: colors.text }]}>Amount (BTC)</Text>
             <View style={[
               styles.inputWrapper,
+              { borderColor: colors.icon + "40", backgroundColor: colors.background },
               amountError ? styles.inputError : null
             ]}>
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: colors.text }]}
                 placeholder="0.00000000"
                 keyboardType="decimal-pad"
                 value={amount}
                 onChangeText={handleAmountChange}
-                placeholderTextColor={Colors.light.icon}
+                placeholderTextColor={colors.icon}
               />
               <TouchableOpacity
-                style={styles.maxButton}
+                style={[styles.maxButton, { backgroundColor: colors.tint }]}
                 onPress={handleMaxPress}
                 disabled={maxSendableAmount <= 0}
               >
-                <Text style={styles.maxButtonText}>MAX</Text>
+                <Text style={[styles.maxButtonText]}>MAX</Text>
               </TouchableOpacity>
             </View>
             {amountError ? <Text style={styles.errorText}>{amountError}</Text> : null}
-            <Text style={styles.fiatValue}>≈ {usdValue}</Text>
+            <Text style={[styles.fiatValue, { color: colors.icon }]}>≈ {usdValue}</Text>
           </View>
   
           <View style={styles.inputContainer}>
-            <Text style={styles.label}>Recipient Address</Text>
+            <Text style={[styles.label, { color: colors.text }]}>Recipient Address</Text>
             <View style={[
               styles.inputWrapper,
+              { borderColor: colors.icon + "40", backgroundColor: colors.background },
               addressError ? styles.inputError : null
             ]}>
               <TextInput
-                style={styles.input}
+                style={[styles.input, { color: colors.text }]}
                 placeholder="Enter Bitcoin address"
                 value={address}
                 onChangeText={handleAddressChange}
-                placeholderTextColor={Colors.light.icon}
+                placeholderTextColor={colors.icon}
                 autoCapitalize="none"
               />
             </View>
             {addressError ? <Text style={styles.errorText}>{addressError}</Text> : null}
           </View>
   
-          <View style={styles.feeContainer}>
-            <Text style={styles.feeText}>Network Fee:</Text>
-            <Text style={styles.feeAmount}>{formatBitcoinAmount(networkFee)} BTC</Text>
+          <View style={[styles.feeContainer, { backgroundColor: colors.icon + "10" }]}>
+            <Text style={[styles.feeText, { color: colors.icon }]}>Network Fee:</Text>
+            <Text style={[styles.feeAmount, { color: colors.text }]}>{formatBitcoinAmount(networkFee)} BTC</Text>
           </View>
   
           <Button
@@ -243,9 +248,7 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   header: {
-    backgroundColor: Colors.light.background,
     borderBottomWidth: 0.5,
-    borderBottomColor: Colors.light.icon + "30",
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -270,13 +273,11 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 17,
-    color: Colors.light.text,
     fontWeight: '400',
   },
   title: {
     fontSize: 17,
     fontWeight: '600',
-    color: Colors.light.text,
     textAlign: 'center',
     flex: 1,
   },
@@ -285,7 +286,6 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     fontSize: 16,
-    color: Colors.light.icon,
   },
   form: {
     padding: 20,
@@ -302,9 +302,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     borderWidth: 1,
-    borderColor: Colors.light.icon + "40",
     borderRadius: 12,
-    backgroundColor: Colors.light.background,
   },
   input: {
     flex: 1,
@@ -315,13 +313,11 @@ const styles = StyleSheet.create({
   maxButton: {
     paddingHorizontal: 12,
     height: 30,
-    backgroundColor: Colors.light.tint,
     borderRadius: 15,
     justifyContent: "center",
     marginRight: 8,
   },
   maxButtonText: {
-    color: Colors.light.text,
     fontWeight: "600",
     fontSize: 12,
   },
@@ -331,27 +327,23 @@ const styles = StyleSheet.create({
   fiatValue: {
     marginTop: 8,
     fontSize: 14,
-    color: Colors.light.icon,
   },
   feeContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     padding: 16,
-    backgroundColor: Colors.light.icon + "10",
     borderRadius: 12,
     marginBottom: 24,
   },
   feeText: {
     fontSize: 14,
-    color: Colors.light.icon,
   },
   feeAmount: {
     fontSize: 14,
     fontWeight: "500",
   },
   sendButton: {
-    backgroundColor: Colors.light.tint,
     height: 56, 
     justifyContent: "center",
     alignItems: "center",
@@ -359,7 +351,6 @@ const styles = StyleSheet.create({
     alignSelf: "center",
   },
   sendButtonDisabled: {
-    backgroundColor: Colors.light.icon + "40",
   },
   sendButtonText: {
     color: "#FFF",

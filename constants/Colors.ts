@@ -11,6 +11,7 @@ export const Colors = {
     icon: '#11181C',
     tabIconDefault: '#687076',
     tabIconSelected: '#ffd600',
+    disabledButton: '#687076',
     // Additional theme colors
     primary: '#ffd600',
     secondary: '#687076',
@@ -28,6 +29,7 @@ dark: {
   icon: '#D0D0D0',
   tabIconDefault: '#8A8F98',
   tabIconSelected: '#FFD600',
+  disabledButton: '#687076',
   // Additional theme colors
   primary: '#FFD600',
   secondary: '#8A8F98',
