@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button";
+import { StyledTextInput } from "@/components/ui/StyledTextInput";
 import { AvailableBalance } from "@/components/wallet/AvailableBalance";
 import { useBitcoinPrice } from "@/hooks/useBitcoinPrice";
 import { useNetworkFee } from "@/hooks/useNetworkFee";
@@ -11,7 +12,6 @@ import {
   Alert,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from "react-native";
@@ -187,51 +187,29 @@ export const SendBitcoin = () => {
       <View style={{flex: 1, justifyContent: "flex-start"}}>
         <AvailableBalance />
         <View style={styles.form}>
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: colors.text }]}>Amount (BTC)</Text>
-            <View style={[
-              styles.inputWrapper,
-              { borderColor: colors.icon + "40", backgroundColor: colors.background },
-              amountError ? styles.inputError : null
-            ]}>
-              <TextInput
-                style={[styles.input, { color: colors.text }]}
-                placeholder="0.00000000"
-                keyboardType="decimal-pad"
-                value={amount}
-                onChangeText={handleAmountChange}
-                placeholderTextColor={colors.icon}
-              />
-              <TouchableOpacity
-                style={[styles.maxButton, { backgroundColor: colors.tint }]}
-                onPress={handleMaxPress}
-                disabled={maxSendableAmount <= 0}
-              >
-                <Text style={[styles.maxButtonText]}>MAX</Text>
-              </TouchableOpacity>
-            </View>
-            {amountError ? <Text style={styles.errorText}>{amountError}</Text> : null}
-            <Text style={[styles.fiatValue, { color: colors.icon }]}>≈ {usdValue}</Text>
-          </View>
+          <StyledTextInput
+            label="Amount (BTC)"
+            placeholder="0.00000000"
+            keyboardType="decimal-pad"
+            value={amount}
+            onChangeText={handleAmountChange}
+            error={amountError}
+            helperText={`≈ ${usdValue}`}
+            rightButton={{
+              title: "MAX",
+              onPress: handleMaxPress,
+              disabled: maxSendableAmount <= 0,
+            }}
+          />
   
-          <View style={styles.inputContainer}>
-            <Text style={[styles.label, { color: colors.text }]}>Recipient Address</Text>
-            <View style={[
-              styles.inputWrapper,
-              { borderColor: colors.icon + "40", backgroundColor: colors.background },
-              addressError ? styles.inputError : null
-            ]}>
-              <TextInput
-                style={[styles.input, { color: colors.text }]}
-                placeholder="Enter Bitcoin address"
-                value={address}
-                onChangeText={handleAddressChange}
-                placeholderTextColor={colors.icon}
-                autoCapitalize="none"
-              />
-            </View>
-            {addressError ? <Text style={styles.errorText}>{addressError}</Text> : null}
-          </View>
+          <StyledTextInput
+            label="Recipient Address"
+            placeholder="Enter Bitcoin address"
+            value={address}
+            onChangeText={handleAddressChange}
+            error={addressError}
+            autoCapitalize="none"
+          />
   
           <View style={[styles.feeContainer, { backgroundColor: colors.icon + "10" }]}>
             <Text style={[styles.feeText, { color: colors.icon }]}>Network Fee:</Text>
@@ -301,44 +279,6 @@ const styles = StyleSheet.create({
   form: {
     padding: 20,
   },
-  inputContainer: {
-    marginBottom: 24,
-  },
-  label: {
-    fontSize: 16,
-    marginBottom: 8,
-    fontWeight: "500",
-  },
-  inputWrapper: {
-    flexDirection: "row",
-    alignItems: "center",
-    borderWidth: 1,
-    borderRadius: 12,
-  },
-  input: {
-    flex: 1,
-    height: 50,
-    paddingHorizontal: 16,
-    fontSize: 16,
-  },
-  maxButton: {
-    paddingHorizontal: 12,
-    height: 30,
-    borderRadius: 15,
-    justifyContent: "center",
-    marginRight: 8,
-  },
-  maxButtonText: {
-    fontWeight: "600",
-    fontSize: 12,
-  },
-  scanButton: {
-    padding: 12,
-  },
-  fiatValue: {
-    marginTop: 8,
-    fontSize: 14,
-  },
   feeContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -367,15 +307,5 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontSize: 16,
     fontWeight: "600",
-  },
-  inputError: {
-    borderColor: "#FF6B6B",
-    borderWidth: 2,
-  },
-  errorText: {
-    fontSize: 14,
-    color: "#FF6B6B",
-    marginTop: 4,
-    marginLeft: 4,
   },
 });
