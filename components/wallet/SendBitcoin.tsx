@@ -270,7 +270,7 @@ const styles = StyleSheet.create({
   },
   backButtonText: {
     fontSize: 17,
-    color: Colors.light.tint,
+    color: Colors.light.text,
     fontWeight: '400',
   },
   title: {
@@ -315,13 +315,13 @@ const styles = StyleSheet.create({
   maxButton: {
     paddingHorizontal: 12,
     height: 30,
-    backgroundColor: Colors.light.tint + "20",
+    backgroundColor: Colors.light.tint,
     borderRadius: 15,
     justifyContent: "center",
     marginRight: 8,
   },
   maxButtonText: {
-    color: Colors.light.tint,
+    color: Colors.light.text,
     fontWeight: "600",
     fontSize: 12,
   },
