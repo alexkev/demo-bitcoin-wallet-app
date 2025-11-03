@@ -1,6 +1,10 @@
+import { Button } from "@/components/ui/Button";
 import { IconSymbol } from '@/components/ui/IconSymbol';
+import { AvailableBalance } from "@/components/wallet/AvailableBalance";
 import { useTheme } from '@/hooks/useTheme';
+import { useWalletStore } from '@/stores/useWalletStore';
 import { Transaction } from '@/types/wallet';
+import { router } from "expo-router";
 import React from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
@@ -77,14 +81,17 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, onPress 
 
 interface TransactionListProps {
   onTransactionPress?: (transaction: Transaction) => void;
-  transactions?: Transaction[];
 }
 
 export const TransactionList: React.FC<TransactionListProps> = ({ 
-  onTransactionPress, 
-  transactions 
+  onTransactionPress,
 }) => {
   const { colors } = useTheme();
+  const { transactions, balance} = useWalletStore();
+    const handleSendPress = () => {
+      router.push('/send');
+    };
+  
 
   const renderTransaction = ({ item }: { item: Transaction }) => (
     <TransactionItem 
@@ -104,15 +111,31 @@ export const TransactionList: React.FC<TransactionListProps> = ({
 
   return (
     <View style={styles.container}>
-      <Text style={[styles.sectionTitle, { color: colors.text }]}>Recent Transactions</Text>
       <FlatList
+        ListHeaderComponent={
+          <>
+            <View style={{ flexDirection: 'column', justifyContent: 'space-between' }}>
+              <AvailableBalance  />
+              <View style={styles.actionsContainer}>
+                <Button
+                  title={balance > 0 ? 'Send Bitcoin' : 'Send your first bitcoin'}
+                  onPress={handleSendPress}
+                  icon="paperplane.fill"
+                  size="sm"
+                  fullWidth={false}
+                />
+              </View>
+            </View>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Recent Transactions</Text>
+          </>
+        }
         data={transactions}
         renderItem={renderTransaction}
         keyExtractor={keyExtractor}
         style={styles.list}
+        contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={renderEmptyState}
-        // ItemSeparatorComponent={() => <View style={[styles.separator, { backgroundColor: colors.icon + '20' }]} />}
       />
     </View>
   );
@@ -122,6 +145,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 0,
+  },
+  content: { paddingBottom: 100 },
+  actionsContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 24,
   },
   sectionTitle: {
     fontSize: 18,

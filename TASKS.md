@@ -38,14 +38,14 @@
 - [ ] Add coin animations (success/failure states)
 
 ### Reusable Components & Final Touch
-- [ ] Extract common button and input components
-- [ ] Test complete flow and fix bugs
+- [x] Extract common button and input components
+- [x] Test complete flow and fix bugs
 - [ ] add FlashList by shopify for transaction list
 
 ## Bonus Graph of Current bitcoin prices
 - [ ] Implement a line graph showing bitcoin price trends using react-native-svg-charts
 ## Bonus Dark mode and light mode support
-- [ ] Implement dark mode and light mode themes using react-native-paper's theming system
+- [x] Implement dark mode and light mode 
 
 TODO
 - implement MMKV persistence for zustand store

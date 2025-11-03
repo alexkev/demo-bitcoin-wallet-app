@@ -1,19 +1,12 @@
-import { Button } from "@/components/ui/Button";
-import { AvailableBalance } from "@/components/wallet/AvailableBalance";
 import { TransactionList } from "@/components/wallet/TransactionList";
 import { useTheme } from "@/hooks/useTheme";
-import { useWalletStore } from "@/stores/useWalletStore";
 import { Transaction } from "@/types/wallet";
-import { router } from "expo-router";
 import React, { useState } from "react";
 import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
-  
-  // Get data from Zustand store
-  const { transactions, balance} = useWalletStore();
   
   // Get theme colors
   const { colors } = useTheme();
@@ -22,27 +15,11 @@ export default function HomeScreen() {
     setSelectedTransaction(transaction);
   };
 
-  const handleSendPress = () => {
-    router.push('/send');
-  };
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={{ flexDirection: 'column', justifyContent: 'space-between' }}>
-        <AvailableBalance  />
-        <View style={styles.actionsContainer}>
-          <Button
-            title={balance > 0 ? 'Send Bitcoin' : 'Send your first bitcoin'}
-            onPress={handleSendPress}
-            icon="paperplane.fill"
-            size="sm"
-            fullWidth={false}
-          />
-        </View>
-      </View>
 
       <TransactionList 
-        transactions={transactions}
         onTransactionPress={handleTransactionPress} 
       />
 
