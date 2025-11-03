@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/Button";
 import { AvailableBalance } from "@/components/wallet/AvailableBalance";
 import { TransactionList } from "@/components/wallet/TransactionList";
-import { Colors } from "@/constants/Colors";
+import { useTheme } from "@/hooks/useTheme";
 import { useWalletStore } from "@/stores/useWalletStore";
 import { Transaction } from "@/types/wallet";
 import { router } from "expo-router";
@@ -14,6 +14,9 @@ export default function HomeScreen() {
   
   // Get data from Zustand store
   const { transactions, balance} = useWalletStore();
+  
+  // Get theme colors
+  const { colors } = useTheme();
 
   const handleTransactionPress = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
@@ -24,7 +27,7 @@ export default function HomeScreen() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
       <View style={{ flexDirection: 'column', justifyContent: 'space-between' }}>
         <AvailableBalance  />
         <View style={styles.actionsContainer}>
@@ -50,24 +53,24 @@ export default function HomeScreen() {
         presentationStyle="pageSheet"
         onRequestClose={() => setSelectedTransaction(null)}
       >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Transaction Details</Text>
+        <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
+          <View style={[styles.modalHeader, { borderBottomColor: colors.outline }]}>
+            <Text style={[styles.modalTitle, { color: colors.text }]}>Transaction Details</Text>
             <TouchableOpacity 
               style={styles.closeButton}
               onPress={() => setSelectedTransaction(null)}
             >
-              <Text style={styles.closeButtonText}>Close</Text>
+              <Text style={[styles.closeButtonText, { color: colors.tint }]}>Close</Text>
             </TouchableOpacity>
           </View>
           {selectedTransaction && (
             <View style={styles.modalContent}>
-              <Text style={styles.detailText}>ID: {selectedTransaction.id}</Text>
-              <Text style={styles.detailText}>Type: {selectedTransaction.type}</Text>
-              <Text style={styles.detailText}>Amount: {selectedTransaction.amount} BTC</Text>
-              <Text style={styles.detailText}>Address: {selectedTransaction.address}</Text>
-              <Text style={styles.detailText}>Status: {selectedTransaction.status}</Text>
-              <Text style={styles.detailText}>
+              <Text style={[styles.detailText, { color: colors.text }]}>ID: {selectedTransaction.id}</Text>
+              <Text style={[styles.detailText, { color: colors.text }]}>Type: {selectedTransaction.type}</Text>
+              <Text style={[styles.detailText, { color: colors.text }]}>Amount: {selectedTransaction.amount} BTC</Text>
+              <Text style={[styles.detailText, { color: colors.text }]}>Address: {selectedTransaction.address}</Text>
+              <Text style={[styles.detailText, { color: colors.text }]}>Status: {selectedTransaction.status}</Text>
+              <Text style={[styles.detailText, { color: colors.text }]}>
                 Date: {new Date(selectedTransaction.timestamp).toLocaleString()}
               </Text>
             </View>
@@ -81,12 +84,14 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.light.background,
   },
-
   actionsContainer: {
     paddingHorizontal: 20,
     marginBottom: 24,
+  },
+  themeContainer: {
+    paddingHorizontal: 20,
+    marginBottom: 16,
   },
   actionButton: {
     alignItems: "center",
@@ -105,7 +110,6 @@ const styles = StyleSheet.create({
   },
   modalContainer: {
     flex: 1,
-    backgroundColor: Colors.light.background,
   },
   modalHeader: {
     flexDirection: 'row',
@@ -114,12 +118,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.light.icon + '20',
   },
   modalTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.light.text,
   },
   closeButton: {
     paddingHorizontal: 16,
@@ -127,7 +129,6 @@ const styles = StyleSheet.create({
   },
   closeButtonText: {
     fontSize: 16,
-    color: Colors.light.tint,
     fontWeight: '600',
   },
   modalContent: {
@@ -136,6 +137,5 @@ const styles = StyleSheet.create({
   detailText: {
     fontSize: 16,
     marginBottom: 12,
-    color: Colors.light.text,
   },
 });

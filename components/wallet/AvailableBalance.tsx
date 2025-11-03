@@ -1,4 +1,5 @@
 import { Colors } from '@/constants/Colors';
+import { useTheme } from '@/hooks/useTheme';
 import { useWalletStore } from '@/stores/useWalletStore';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
@@ -6,6 +7,8 @@ import { StyleSheet, Text, View } from 'react-native';
 export function AvailableBalance() {
   const { usdRate, calculateBalance } = useWalletStore();
   const balance = calculateBalance();
+
+  const colors = useTheme();
   
   const usdValue = (balance * usdRate).toLocaleString('en-US', {
     style: 'currency',

@@ -1,5 +1,5 @@
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { Colors } from '@/constants/Colors';
+import { useTheme } from '@/hooks/useTheme';
 import { Transaction } from '@/types/wallet';
 import React from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -10,10 +10,11 @@ interface TransactionItemProps {
 }
 
 const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, onPress }) => {
+  const { colors } = useTheme();
   const isReceive = transaction.type === 'receive';
   const amount = isReceive ? `+${transaction.amount.toFixed(8)}` : `-${transaction.amount.toFixed(8)}`;
   const iconName = isReceive ? 'arrow.down.left' : 'arrow.up.right';
-  const iconColor = isReceive ? '#4CAF50' : '#FF6B6B';
+  const iconColor = isReceive ? colors.success : colors.error;
   
   const formatAddress = (address: string) => {
     return `${address.slice(0, 6)}...${address.slice(-6)}`;
@@ -30,33 +31,33 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, onPress 
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'completed': return '#4CAF50';
-      case 'pending': return '#FF9800';
-      case 'failed': return '#F44336';
-      default: return Colors.light.icon;
+      case 'completed': return colors.success;
+      case 'pending': return colors.warning;
+      case 'failed': return colors.error;
+      default: return colors.icon;
     }
   };
 
   return (
-    <TouchableOpacity style={styles.transactionItem} onPress={() => onPress(transaction)}>
+    <TouchableOpacity style={[styles.transactionItem, { backgroundColor: colors.surface }]} onPress={() => onPress(transaction)}>
       <View style={styles.transactionLeft}>
         <View style={[styles.iconContainer, { backgroundColor: iconColor + '20' }]}>
           <IconSymbol name={iconName as any} size={20} color={iconColor} />
         </View>
         <View style={styles.transactionInfo}>
-          <Text style={styles.transactionType}>
+          <Text style={[styles.transactionType, { color: colors.text }]}>
             {isReceive ? 'Received' : 'Sent'}
           </Text>
-          <Text style={styles.transactionAddress}>
+          <Text style={[styles.transactionAddress, { color: colors.icon }]}>
             {isReceive ? `From ${formatAddress(transaction.address)}` : `To ${formatAddress(transaction.address)}`}
           </Text>
-          <Text style={styles.transactionTime}>
+          <Text style={[styles.transactionTime, { color: colors.icon }]}>
             {formatTime(transaction.timestamp)}
           </Text>
         </View>
       </View>
       <View style={styles.transactionRight}>
-        <IconSymbol name="arrow.up.right.square" size={16} color={Colors.light.text } style={{ marginBottom: 8 }} />
+        <IconSymbol name="arrow.up.right.square" size={16} color={colors.text} style={{ marginBottom: 8 }} />
         <Text style={[styles.transactionAmount, { color: iconColor }]}>
           {amount} BTC
         </Text>
@@ -80,6 +81,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
   onTransactionPress, 
   transactions 
 }) => {
+  const { colors } = useTheme();
 
   const renderTransaction = ({ item }: { item: Transaction }) => (
     <TransactionItem 
@@ -92,14 +94,14 @@ export const TransactionList: React.FC<TransactionListProps> = ({
 
   const renderEmptyState = () => (
     <View style={styles.emptyState}>
-      <Text style={styles.emptyStateText}>No transactions yet</Text>
-      <Text style={styles.emptyStateSubtext}>Your transactions will appear here</Text>
+      <Text style={[styles.emptyStateText, { color: colors.icon }]}>No transactions yet</Text>
+      <Text style={[styles.emptyStateSubtext, { color: colors.icon }]}>Your transactions will appear here</Text>
     </View>
   );
 
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Recent Transactions</Text>
+      <Text style={[styles.sectionTitle, { color: colors.text }]}>Recent Transactions</Text>
       <FlatList
         data={transactions}
         renderItem={renderTransaction}
@@ -107,7 +109,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
         style={styles.list}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={renderEmptyState}
-        ItemSeparatorComponent={() => <View style={styles.separator} />}
+        // ItemSeparatorComponent={() => <View style={[styles.separator, { backgroundColor: colors.icon + '20' }]} />}
       />
     </View>
   );
@@ -116,13 +118,13 @@ export const TransactionList: React.FC<TransactionListProps> = ({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 20,
+    paddingHorizontal: 0,
   },
   sectionTitle: {
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 16,
-    color: Colors.light.text,
+    paddingLeft: 20,
   },
   list: {
     flex: 1,
@@ -131,9 +133,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
-    backgroundColor: Colors.light.background,
     borderRadius: 12,
-    marginBottom: 8,
+    marginVertical: 4,
+    marginHorizontal: 20,
+    paddingHorizontal: 8,
   },
   transactionLeft: {
     flex: 1,
@@ -154,17 +157,14 @@ const styles = StyleSheet.create({
   transactionType: {
     fontSize: 16,
     fontWeight: '600',
-    color: Colors.light.text,
     marginBottom: 2,
   },
   transactionAddress: {
     fontSize: 14,
-    color: Colors.light.icon,
     marginBottom: 2,
   },
   transactionTime: {
     fontSize: 12,
-    color: Colors.light.icon,
   },
   transactionRight: {
     alignItems: 'flex-end',
@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   },
   separator: {
     height: 1,
-    backgroundColor: Colors.light.icon + '20',
+    marginHorizontal: 20,
   },
   emptyState: {
     alignItems: 'center',
@@ -200,12 +200,10 @@ const styles = StyleSheet.create({
   emptyStateText: {
     fontSize: 18,
     fontWeight: '600',
-    color: Colors.light.icon,
     marginBottom: 8,
   },
   emptyStateSubtext: {
     fontSize: 14,
-    color: Colors.light.icon,
     textAlign: 'center',
   },
 });
