@@ -12,32 +12,29 @@
 - react-native-svg-charts for bonus bitcoin price graph
 - react-native-paper for UI components in ./components/ui 
 
-### **Hour 1: Core Infrastructure & Transaction List (Priority 1)**
+### Core Infrastructure & Transaction List**
 - [x] Create Zustand store with mmkv persistence (initial data: MockTransactions.ts)
 - [x] Build FlashList component for transaction display
 - [x] Integrate transaction list into home screen with balance at top
 - [x] Update wallet home icon to bitcoin symbol
 
-### **Hour 2: Send Form Validation (Priority 2)**
-- [-] Implement Bitcoin address validation
-- [ ] Add BTC amount validation with decimal handling
-- [ ] Create MAX button functionality (balance - network fee)
-- [ ] Use `canSendAmount` validation logic in zustand store
-- [ ] Use `getNetworkFee` utils for fee calculation
+### Send Form Validation
+- [x] Implement Bitcoin address validation
+- [x] Add BTC amount validation with decimal handling
+- [x] Use `canSendAmount` validation logic in zustand store
+- [x] Use `getNetworkFee` utils for fee calculation
+- [x] Connect send form to create new transactions
+- [x] Ensure new transactions appear at top of list
+- [x] Update wallet balance when transactions created
+- [x] Use zustand store's `addTransaction` method
 
-### **Hour 3: Transaction Creation & Flow (Priority 3)**  
-- [ ] Connect send form to create new transactions
-- [ ] Ensure new transactions appear at top of list
-- [ ] Update wallet balance when transactions created
-- [ ] Use zustand store's `addTransaction` method
-
-### **Hour 4: Transaction Details & Polish (Priority 4)**
-- [ ] Create transaction detail modal for tap interactions
+### Transaction Details & Polish
+- [x] Create transaction detail modal for tap interactions
 - [ ] Improve styling and user feedback
-- [ ] Add proper error states and validation messages
+- [x] Add proper error states and validation messages
 - [ ] Add coin animations (success/failure states)
 
-### **Hour 5: Reusable Components & Final Touch (Priority 5)**
+### Reusable Components & Final Touch
 - [ ] Extract common button and input components
 - [ ] Test complete flow and fix bugs
 - [ ] Optimize FlashList performance

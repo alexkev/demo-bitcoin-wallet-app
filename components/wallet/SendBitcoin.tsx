@@ -1,5 +1,8 @@
 import { Colors } from "@/constants/Colors";
-import React, { useState } from "react";
+import { useWalletStore } from "@/stores/useWalletStore";
+import { formatBitcoinAmount, isValidBitcoinAddress, validateBitcoinAmount } from "@/utils/bitcoinValidation";
+import { router } from "expo-router";
+import React, { useMemo, useState } from "react";
 import {
   Alert,
   StyleSheet,
@@ -9,72 +12,213 @@ import {
   View,
 } from "react-native";
 
+/*
+ * DEMO ADDRESSES FOR TESTING:
+ * 
+ * ✅ VALID ADDRESSES:
+ * Legacy (P2PKH):     1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
+ * Legacy (P2PKH):     1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2
+ * P2SH:               3J98t1WpEZ73CNmQviecrnyiWrnqRhWNLy
+ * Testnet Legacy:     mzBc4XEFSdzCDcTxAgf6EZXgsZWpztRhef
+ * Testnet P2SH:       2MzQwSSnBHWHqSAqtTVQ6v47XtaisrJa1Vc
+ * Testnet Bech32:     tb1qw508d6qejxtdg4y5r3zarvary0c5xw7kxpjzsx
+ * 
+ * ❌ INVALID ADDRESSES:
+ * Too short:         1A1zP1eP5QGefi2DMPTfTL5SL
+ * Too long:          1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNaExtraChars123456789
+ * Invalid characters: 1A1zP1eP5QGefi2DMPTfTL5SLmv7Divf0a
+ * Wrong prefix:       4A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa
+ * Empty string:       
+ * Non-address:        not-a-bitcoin-address
+ * Mixed case bech32:  BC1QXY2KGDYGJRSQTZQ2N0YRF2493P83KKFJHX0WLH
+ */
+
 export const SendBitcoin = () => {
   const [amount, setAmount] = useState("");
   const [address, setAddress] = useState("");
+  const [amountError, setAmountError] = useState("");
+  const [addressError, setAddressError] = useState("");
+
+  // Get wallet data from Zustand store
+  const { calculateBalance, canSendAmount, getNetworkFee, usdRate, addTransaction } = useWalletStore();
+  const balance = calculateBalance();
+  const networkFee = getNetworkFee();
+
+  // Validation logic
+  const amountValidation = useMemo(() => {
+    if (!amount) return { isValid: true, value: 0 };
+    return validateBitcoinAmount(amount);
+  }, [amount]);
+
+  const isAddressValid = useMemo(() => {
+    if (!address) return true;
+    return isValidBitcoinAddress(address);
+  }, [address]);
+
+  const maxSendableAmount = useMemo(() => {
+    const maxAmount = balance - networkFee;
+    return Math.max(0, maxAmount);
+  }, [balance, networkFee]);
+
+  const usdValue = useMemo(() => {
+    if (amountValidation.isValid && amountValidation.value > 0) {
+      return (amountValidation.value * usdRate).toLocaleString('en-US', {
+        style: 'currency',
+        currency: 'USD',
+      });
+    }
+    return '$0.00';
+  }, [amountValidation, usdRate]);
+
+  const handleAmountChange = (text: string) => {
+    setAmount(text);
+    setAmountError("");
+    
+    if (text) {
+      const validation = validateBitcoinAmount(text);
+      if (!validation.isValid) {
+        setAmountError(validation.error || "Invalid amount");
+      } else if (!canSendAmount(validation.value)) {
+        setAmountError(`Insufficient balance. Max sendable: ${formatBitcoinAmount(maxSendableAmount)} BTC`);
+      }
+    }
+  };
+
+  const handleAddressChange = (text: string) => {
+    setAddress(text);
+    setAddressError("");
+    
+    if (text && !isValidBitcoinAddress(text)) {
+      setAddressError("Invalid Bitcoin address");
+    }
+  };
+
+  const handleMaxPress = () => {
+    if (maxSendableAmount > 0) {
+      const maxAmountStr = formatBitcoinAmount(maxSendableAmount);
+      setAmount(maxAmountStr);
+      setAmountError("");
+    }
+  };
 
   const handleSend = () => {
-    Alert.alert("Confirm Transaction", `Send ${amount} BTC to ${address}?`, [
-      { text: "Cancel", style: "cancel" },
-      {
-        text: "Confirm",
-        onPress: () => Alert.alert("Success", "Transaction initiated! (Mock)"),
-      },
-    ]);
+    // Final validation before sending
+    if (!amountValidation.isValid) {
+      setAmountError(amountValidation.error || "Invalid amount");
+      return;
+    }
+    
+    if (!isAddressValid) {
+      setAddressError("Invalid Bitcoin address");
+      return;
+    }
+
+    if (!canSendAmount(amountValidation.value)) {
+      setAmountError(`Insufficient balance. Max sendable: ${formatBitcoinAmount(maxSendableAmount)} BTC`);
+      return;
+    }
+
+    const confirmTransaction = () => {
+      // Create new transaction using Zustand store
+      addTransaction({
+        type: 'send',
+        amount: amountValidation.value,
+        address: address.trim(),
+        status: 'completed', // In a real app, this would start as 'pending'
+      });
+
+      // Clear form
+      setAmount("");
+      setAddress("");
+      setAmountError("");
+      setAddressError("");
+
+      // Show success message
+      Alert.alert(
+        "Transaction Sent!", 
+        `Successfully sent ${formatBitcoinAmount(amountValidation.value)} BTC to ${address.slice(0, 8)}...${address.slice(-8)}`,
+        [{ text: "OK", style: "default", onPress: () => {
+          router.push('/')
+        } }]
+      );
+    };
+
+    Alert.alert(
+      "Confirm Transaction", 
+      `Send ${formatBitcoinAmount(amountValidation.value)} BTC to ${address.slice(0, 8)}...${address.slice(-8)}?\n\nNetwork Fee: ${formatBitcoinAmount(networkFee)} BTC`, 
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Confirm", onPress: confirmTransaction, style: "default" },
+      ]
+    );
   };
+
+  const isFormValid = amountValidation.isValid && isAddressValid && amount && address && !amountError && !addressError;
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Send Bitcoin</Text>
-        <Text style={styles.subtitle}>Available: 0.17500000 BTC</Text>
+        <Text style={styles.subtitle}>Available: {formatBitcoinAmount(balance)} BTC</Text>
       </View>
 
       <View style={styles.form}>
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Amount (BTC)</Text>
-          <View style={styles.inputWrapper}>
+          <View style={[
+            styles.inputWrapper,
+            amountError ? styles.inputError : null
+          ]}>
             <TextInput
               style={styles.input}
               placeholder="0.00000000"
               keyboardType="decimal-pad"
               value={amount}
-              onChangeText={setAmount}
+              onChangeText={handleAmountChange}
               placeholderTextColor={Colors.light.icon}
             />
-            <TouchableOpacity style={styles.maxButton}>
+            <TouchableOpacity 
+              style={styles.maxButton}
+              onPress={handleMaxPress}
+              disabled={maxSendableAmount <= 0}
+            >
               <Text style={styles.maxButtonText}>MAX</Text>
             </TouchableOpacity>
           </View>
-          <Text style={styles.fiatValue}>≈ $0.00 USD</Text>
+          {amountError ? <Text style={styles.errorText}>{amountError}</Text> : null}
+          <Text style={styles.fiatValue}>≈ {usdValue}</Text>
         </View>
 
         <View style={styles.inputContainer}>
           <Text style={styles.label}>Recipient Address</Text>
-          <View style={styles.inputWrapper}>
+          <View style={[
+            styles.inputWrapper,
+            addressError ? styles.inputError : null
+          ]}>
             <TextInput
               style={styles.input}
               placeholder="Enter Bitcoin address"
               value={address}
-              onChangeText={setAddress}
+              onChangeText={handleAddressChange}
               placeholderTextColor={Colors.light.icon}
               autoCapitalize="none"
             />
           </View>
+          {addressError ? <Text style={styles.errorText}>{addressError}</Text> : null}
         </View>
 
         <View style={styles.feeContainer}>
           <Text style={styles.feeText}>Network Fee:</Text>
-          <Text style={styles.feeAmount}>0.00001 BTC</Text>
+          <Text style={styles.feeAmount}>{formatBitcoinAmount(networkFee)} BTC</Text>
         </View>
 
         <TouchableOpacity
           style={[
             styles.sendButton,
-            (!amount || !address) && styles.sendButtonDisabled,
+            !isFormValid && styles.sendButtonDisabled,
           ]}
           onPress={handleSend}
-          disabled={!amount || !address}
+          disabled={!isFormValid}
         >
           <Text style={styles.sendButtonText}>Send Bitcoin</Text>
         </TouchableOpacity>
@@ -182,5 +326,15 @@ const styles = StyleSheet.create({
     color: "#FFF",
     fontSize: 16,
     fontWeight: "600",
+  },
+  inputError: {
+    borderColor: "#FF6B6B",
+    borderWidth: 2,
+  },
+  errorText: {
+    fontSize: 14,
+    color: "#FF6B6B",
+    marginTop: 4,
+    marginLeft: 4,
   },
 });
