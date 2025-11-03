@@ -1,39 +1,100 @@
+import { TransactionList } from "@/components/wallet/TransactionList";
 import { Colors } from "@/constants/Colors";
-import React from "react";
-import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useWalletStore } from "@/stores/useWalletStore";
+import { Transaction } from "@/types/wallet";
+import { router } from "expo-router";
+import React, { useState } from "react";
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function HomeScreen() {
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  
+  // Get data from Zustand store
+  const { transactions, usdRate, calculateBalance } = useWalletStore();
+  const balance = calculateBalance();
+  
+  const usdValue = (balance * usdRate).toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  });
+
+  const handleTransactionPress = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+  };
+
+  const handleSendPress = () => {
+    router.push('/send');
+  };
+
   return (
-    <View style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
-     <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.balanceContainer}>
         <Text style={styles.label}>Available Balance</Text>
         <View style={styles.amountRow}>
-          <Text style={styles.balance}>{0.175.toFixed(8)}</Text>
+          <Text style={styles.balance}>{balance.toFixed(8)}</Text>
           <Text style={styles.currency}> BTC</Text>
         </View>
-
-        <Text style={styles.fiatValue}>≈ $5,250.00 USD</Text>
+        <Text style={styles.fiatValue}>≈ {usdValue}</Text>
       </View>
 
       <View style={styles.actionsContainer}>
-      <TouchableOpacity style={styles.sendButton}>
-          <Text style={styles.sendButtonText}>Send your first bitcoin</Text>
+        <TouchableOpacity style={styles.sendButton} onPress={handleSendPress}>
+          <Text style={styles.sendButtonText}>
+            {balance > 0 ? 'Send Bitcoin' : 'Send your first bitcoin'}
+          </Text>
         </TouchableOpacity>
       </View>
-    </View>
-    </View>
+
+      <TransactionList 
+        transactions={transactions}
+        onTransactionPress={handleTransactionPress} 
+      />
+
+      {/* Transaction Detail Modal - We'll implement this properly later */}
+      <Modal
+        visible={selectedTransaction !== null}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setSelectedTransaction(null)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>Transaction Details</Text>
+            <TouchableOpacity 
+              style={styles.closeButton}
+              onPress={() => setSelectedTransaction(null)}
+            >
+              <Text style={styles.closeButtonText}>Close</Text>
+            </TouchableOpacity>
+          </View>
+          {selectedTransaction && (
+            <View style={styles.modalContent}>
+              <Text style={styles.detailText}>ID: {selectedTransaction.id}</Text>
+              <Text style={styles.detailText}>Type: {selectedTransaction.type}</Text>
+              <Text style={styles.detailText}>Amount: {selectedTransaction.amount} BTC</Text>
+              <Text style={styles.detailText}>Address: {selectedTransaction.address}</Text>
+              <Text style={styles.detailText}>Status: {selectedTransaction.status}</Text>
+              <Text style={styles.detailText}>
+                Date: {new Date(selectedTransaction.timestamp).toLocaleString()}
+              </Text>
+            </View>
+          )}
+        </View>
+      </Modal>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
-    marginBottom: 16,
+    flex: 1,
+    backgroundColor: Colors.light.background,
   },
   balanceContainer: {
     alignItems: "center",
-    marginBottom: 24,
+    paddingVertical: 32,
+    paddingHorizontal: 20,
   },
   label: {
     fontSize: 16,
@@ -60,9 +121,8 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   actionsContainer: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
+    marginBottom: 24,
   },
   sendButton: {
     backgroundColor: Colors.light.tint,
@@ -91,5 +151,40 @@ const styles = StyleSheet.create({
   actionText: {
     fontSize: 14,
     fontWeight: "500",
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: Colors.light.background,
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.light.icon + '20',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: Colors.light.text,
+  },
+  closeButton: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  closeButtonText: {
+    fontSize: 16,
+    color: Colors.light.tint,
+    fontWeight: '600',
+  },
+  modalContent: {
+    padding: 20,
+  },
+  detailText: {
+    fontSize: 16,
+    marginBottom: 12,
+    color: Colors.light.text,
   },
 });
