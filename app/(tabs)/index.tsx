@@ -1,3 +1,4 @@
+import { NavBar } from "@/components/ui/NavBar";
 import { TransactionList } from "@/components/wallet/TransactionList";
 import { useTheme } from "@/hooks/useTheme";
 import { Transaction } from "@/types/wallet";
@@ -31,15 +32,18 @@ export default function HomeScreen() {
         onRequestClose={() => setSelectedTransaction(null)}
       >
         <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
-          <View style={[styles.modalHeader, { borderBottomColor: colors.outline }]}>
-            <Text style={[styles.modalTitle, { color: colors.text }]}>Transaction Details</Text>
-            <TouchableOpacity 
-              style={styles.closeButton}
-              onPress={() => setSelectedTransaction(null)}
-            >
-              <Text style={[styles.closeButtonText, { color: colors.tint }]}>Close</Text>
-            </TouchableOpacity>
-          </View>
+          <NavBar 
+            title="Transaction Details"
+            showBackButton={false}
+            rightComponent={
+              <TouchableOpacity 
+                style={styles.closeButton}
+                onPress={() => setSelectedTransaction(null)}
+              >
+                <Text style={[styles.closeButtonText, { color: colors.tint }]}>Close</Text>
+              </TouchableOpacity>
+            }
+          />
           {selectedTransaction && (
             <View style={styles.modalContent}>
               <Text style={[styles.detailText, { color: colors.text }]}>ID: {selectedTransaction.id}</Text>
@@ -91,18 +95,7 @@ const styles = StyleSheet.create({
   modalContainer: {
     flex: 1,
   },
-  modalHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 20,
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-  },
-  modalTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-  },
+
   closeButton: {
     paddingHorizontal: 16,
     paddingVertical: 8,

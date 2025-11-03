@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/Button";
+import { NavBar } from "@/components/ui/NavBar";
 import { StyledTextInput } from "@/components/ui/StyledTextInput";
 import { AvailableBalance } from "@/components/wallet/AvailableBalance";
 import { useBitcoinPrice } from "@/hooks/useBitcoinPrice";
@@ -12,7 +13,6 @@ import {
   Alert,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from "react-native";
 import { SafeAreaView, } from "react-native-safe-area-context";
@@ -174,16 +174,7 @@ export const SendBitcoin = () => {
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-      <View style={[styles.navBar]}>
-        <TouchableOpacity 
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Text style={[styles.backButtonText, { color: colors.text }]}>‹ Back</Text>
-        </TouchableOpacity>
-        <Text style={[styles.title, { color: colors.text }]}>Send Bitcoin</Text>
-        <View style={styles.rightSpace} />
-      </View>
+      <NavBar title="Send Bitcoin" />
       <View style={{flex: 1, justifyContent: "flex-start"}}>
         <AvailableBalance />
         <View style={styles.form}>
@@ -247,32 +238,7 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 3,
   },
-  navBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    minHeight: 44,
-  },
-  backButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 4,
-    minWidth: 60,
-  },
-  backButtonText: {
-    fontSize: 17,
-    fontWeight: '400',
-  },
-  title: {
-    fontSize: 17,
-    fontWeight: '600',
-    textAlign: 'center',
-    flex: 1,
-  },
-  rightSpace: {
-    minWidth: 60,
-  },
+
   subtitle: {
     fontSize: 16,
   },

@@ -1,3 +1,4 @@
+import { useTheme } from '@/hooks/useTheme';
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useNetworkActivityDevTools } from '@rozenite/network-activity-plugin';
 import { useFonts } from 'expo-font';
@@ -5,8 +6,6 @@ import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { SWRConfig } from 'swr';
-
-import { useTheme } from '@/hooks/useTheme';
 
 export default function RootLayout() {
   useNetworkActivityDevTools();
@@ -30,7 +29,13 @@ export default function RootLayout() {
       }}
     >
       <ThemeProvider value={theme.mode === 'dark' ? DarkTheme : DefaultTheme}>
-        <Stack>
+        <Stack
+          screenOptions={{
+            contentStyle: {
+              backgroundColor: theme.colors.background,
+            },
+          }}
+        >
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
           <Stack.Screen name="+not-found" />
         </Stack>
