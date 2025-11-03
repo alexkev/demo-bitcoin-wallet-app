@@ -16,6 +16,7 @@ export const MOCK_TRANSACTIONS: Transaction[] = [
       timestamp: new Date(Date.now() - 7200000),
       address: "1BvBMSEYstWetqTFn5Au4m4GFg7xJaNVN2",
       status: "completed" as const,
+      networkFee: 0.00005,
     },
     {
       id: "3",

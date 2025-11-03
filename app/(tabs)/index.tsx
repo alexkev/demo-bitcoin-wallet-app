@@ -50,7 +50,7 @@ export default function HomeScreen() {
       <Modal
         visible={selectedTransaction !== null}
         animationType="slide"
-        presentationStyle="pageSheet"
+        presentationStyle="formSheet"
         onRequestClose={() => setSelectedTransaction(null)}
       >
         <View style={[styles.modalContainer, { backgroundColor: colors.background }]}>
@@ -68,6 +68,9 @@ export default function HomeScreen() {
               <Text style={[styles.detailText, { color: colors.text }]}>ID: {selectedTransaction.id}</Text>
               <Text style={[styles.detailText, { color: colors.text }]}>Type: {selectedTransaction.type}</Text>
               <Text style={[styles.detailText, { color: colors.text }]}>Amount: {selectedTransaction.amount} BTC</Text>
+              {selectedTransaction.networkFee && (
+                <Text style={[styles.detailText, { color: colors.text }]}>Network Fee: {selectedTransaction.networkFee} BTC</Text>
+              )}
               <Text style={[styles.detailText, { color: colors.text }]}>Address: {selectedTransaction.address}</Text>
               <Text style={[styles.detailText, { color: colors.text }]}>Status: {selectedTransaction.status}</Text>
               <Text style={[styles.detailText, { color: colors.text }]}>

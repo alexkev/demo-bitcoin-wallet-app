@@ -5,6 +5,7 @@ export interface Transaction {
   type: "send" | "receive";
   address: string;
   status: "pending" | "completed" | "failed";
+  networkFee?: number; // Only present for send transactions
 }
 
 export interface Wallet {

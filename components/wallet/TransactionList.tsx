@@ -54,6 +54,9 @@ const TransactionItem: React.FC<TransactionItemProps> = ({ transaction, onPress 
           <Text style={[styles.transactionTime, { color: colors.icon }]}>
             {formatTime(transaction.timestamp)}
           </Text>
+          {/* <Text style={[styles.transactionTime, { color: colors.icon }]}>
+            {!isReceive && transaction.networkFee && `Fee: ${transaction.networkFee.toFixed(8)} BTC`}
+          </Text> */}
         </View>
       </View>
       <View style={styles.transactionRight}>

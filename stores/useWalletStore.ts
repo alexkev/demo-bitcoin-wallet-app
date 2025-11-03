@@ -42,10 +42,13 @@ export const useWalletStore = create<WalletStore>()(
       networkFee: NETWORK_FEE,
       
       addTransaction: (transaction) => {
+        const { networkFee } = get();
         const newTransaction: Transaction = {
           ...transaction,
           id: `tx_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
           timestamp: new Date(),
+          // Include network fee for send transactions
+          ...(transaction.type === 'send' && { networkFee }),
         };
         
         set((state) => {
@@ -59,14 +62,16 @@ export const useWalletStore = create<WalletStore>()(
       },
       
       calculateBalance: () => {
-        const { transactions, networkFee } = get();
+        const { transactions } = get();
         return transactions.reduce((balance, tx) => {
           if (tx.status !== 'completed') return balance;
           
           if (tx.type === 'receive') {
             return balance + tx.amount;
           } else if (tx.type === 'send') {
-            return balance - tx.amount - networkFee;
+            // Subtract both the amount and network fee for send transactions
+            const totalSent = tx.amount + (tx.networkFee || 0);
+            return balance - totalSent;
           }
           return balance;
         }, 0);
