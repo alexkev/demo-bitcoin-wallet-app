@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/Button";
 import { AvailableBalance } from "@/components/wallet/AvailableBalance";
 import { useBitcoinPrice } from "@/hooks/useBitcoinPrice";
+import { useNetworkFee } from "@/hooks/useNetworkFee";
 import { useTheme } from "@/hooks/useTheme";
 import { useWalletStore } from "@/stores/useWalletStore";
 import { formatBitcoinAmount, isValidBitcoinAddress, validateBitcoinAmount } from "@/utils/bitcoinValidation";
@@ -47,10 +48,18 @@ export const SendBitcoin = () => {
   const { colors } = useTheme();
 
   // Get wallet data from Zustand store
-  const { calculateBalance, canSendAmount, getNetworkFee, addTransaction } = useWalletStore();
+  const { calculateBalance, canSendAmount, getNetworkFee, setNetworkFee, addTransaction } = useWalletStore();
   const { price: usdRate } = useBitcoinPrice();
+  const { selectedFee: dynamicNetworkFee, isLoading: feeLoading } = useNetworkFee('halfHour');
   const balance = calculateBalance();
   const networkFee = getNetworkFee();
+
+  // Update the wallet store with the dynamic network fee
+  React.useEffect(() => {
+    if (!feeLoading && dynamicNetworkFee > 0) {
+      setNetworkFee(dynamicNetworkFee);
+    }
+  }, [dynamicNetworkFee, feeLoading, setNetworkFee]);
 
   // Validation logic
   const amountValidation = useMemo(() => {
@@ -232,7 +241,7 @@ export const SendBitcoin = () => {
           <Button
             title="Send Bitcoin"
             onPress={handleSend}
-            disabled={!isFormValid}
+            disabled={!isFormValid || feeLoading}
             icon="paperplane.fill"
             size="md"
             fullWidth={false}

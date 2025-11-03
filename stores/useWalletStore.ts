@@ -23,12 +23,14 @@ const zustandStorage: StateStorage = {
 type WalletStore = {
   transactions: Transaction[];
   balance: number;
+  networkFee: number;
   
   // Actions
   addTransaction: (transaction: Omit<Transaction, 'id' | 'timestamp'>) => void;
   calculateBalance: () => number;
   canSendAmount: (amount: number) => boolean;
   getNetworkFee: () => number;
+  setNetworkFee: (fee: number) => void;
   initializeTransactions: () => void;
 };
 
@@ -37,6 +39,7 @@ export const useWalletStore = create<WalletStore>()(
     (set, get) => ({
       transactions: MOCK_TRANSACTIONS,
       balance: 0,
+      networkFee: NETWORK_FEE,
       
       addTransaction: (transaction) => {
         const newTransaction: Transaction = {
@@ -56,14 +59,14 @@ export const useWalletStore = create<WalletStore>()(
       },
       
       calculateBalance: () => {
-        const { transactions } = get();
+        const { transactions, networkFee } = get();
         return transactions.reduce((balance, tx) => {
           if (tx.status !== 'completed') return balance;
           
           if (tx.type === 'receive') {
             return balance + tx.amount;
           } else if (tx.type === 'send') {
-            return balance - tx.amount - NETWORK_FEE;
+            return balance - tx.amount - networkFee;
           }
           return balance;
         }, 0);
@@ -71,11 +74,16 @@ export const useWalletStore = create<WalletStore>()(
       
       canSendAmount: (amount: number) => {
         const balance = get().calculateBalance();
-        const totalRequired = amount + NETWORK_FEE;
+        const { networkFee } = get();
+        const totalRequired = amount + networkFee;
         return totalRequired <= balance && amount > 0;
       },
       
-      getNetworkFee: () => NETWORK_FEE,
+      getNetworkFee: () => get().networkFee,
+      
+      setNetworkFee: (fee: number) => {
+        set({ networkFee: fee });
+      },
       
       initializeTransactions: () => {
         const balance = get().calculateBalance();
