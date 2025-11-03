@@ -1,4 +1,4 @@
-import { Colors } from '@/constants/Colors';
+import { useTheme } from '@/hooks/useTheme';
 import React from 'react';
 import { StyleSheet, Text, TextStyle, TouchableOpacity, TouchableOpacityProps, ViewStyle } from 'react-native';
 import { IconSymbol } from './IconSymbol';
@@ -25,17 +25,23 @@ export function Button({
   onPress,
   icon,
   iconSize,
-  iconColor = Colors.light.icon,
+  iconColor,
   variant = 'rectangular',
   size = 'md',
   fullWidth = true,
-  backgroundColor = Colors.light.tint,
-  textColor = Colors.light.text,
+  backgroundColor,
+  textColor,
   textStyle,
   buttonStyle,
+  disabled,
   ...props
 }: ButtonProps) {
+  const { colors } = useTheme();
   const isRectangular = variant === 'rectangular';
+  
+  const finalBackgroundColor = disabled ? colors.icon + '40' : colors.tint;
+  const finalTextColor = disabled ? colors.icon : colors.buttonText;
+  const finalIconColor = disabled ? colors.icon : colors.buttonIcon;
   
   // Size configurations
   const sizeConfig = {
@@ -52,7 +58,7 @@ export function Button({
       style={[
         styles.button,
         {
-          backgroundColor,
+          backgroundColor: finalBackgroundColor,
           borderRadius: currentSize.borderRadius,
           height: currentSize.height,
           width: fullWidth ? '100%' : 'auto',
@@ -61,12 +67,13 @@ export function Button({
         buttonStyle
       ]} 
       onPress={onPress}
+      disabled={disabled}
       {...props}
     >
       <Text style={[
         styles.buttonText,
         { 
-          color: textColor,
+          color: finalTextColor,
           fontSize: currentSize.fontSize,
         },
         textStyle
@@ -77,7 +84,7 @@ export function Button({
         <IconSymbol 
           size={finalIconSize} 
           name={icon} 
-          color={iconColor} 
+          color={finalIconColor} 
         />
       )}
     </TouchableOpacity>
