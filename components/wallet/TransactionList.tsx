@@ -1,6 +1,5 @@
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Colors } from '@/constants/Colors';
-import { MOCK_TRANSACTIONS } from '@/constants/MockTransactions';
 import { Transaction } from '@/types/wallet';
 import React from 'react';
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
@@ -78,7 +77,7 @@ interface TransactionListProps {
 
 export const TransactionList: React.FC<TransactionListProps> = ({ 
   onTransactionPress, 
-  transactions = MOCK_TRANSACTIONS 
+  transactions 
 }) => {
 
   const renderTransaction = ({ item }: { item: Transaction }) => (
@@ -131,18 +130,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 12,
-    paddingHorizontal: 16,
     backgroundColor: Colors.light.background,
     borderRadius: 12,
     marginBottom: 8,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
-    elevation: 1,
   },
   transactionLeft: {
     flex: 1,
@@ -200,7 +190,6 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     backgroundColor: Colors.light.icon + '20',
-    marginHorizontal: 16,
   },
   emptyState: {
     alignItems: 'center',

@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/Button";
+import { AvailableBalance } from "@/components/wallet/AvailableBalance";
 import { TransactionList } from "@/components/wallet/TransactionList";
 import { Colors } from "@/constants/Colors";
 import { useWalletStore } from "@/stores/useWalletStore";
@@ -11,13 +13,7 @@ export default function HomeScreen() {
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   
   // Get data from Zustand store
-  const { transactions, usdRate, calculateBalance } = useWalletStore();
-  const balance = calculateBalance();
-  
-  const usdValue = (balance * usdRate).toLocaleString('en-US', {
-    style: 'currency',
-    currency: 'USD',
-  });
+  const { transactions, balance} = useWalletStore();
 
   const handleTransactionPress = (transaction: Transaction) => {
     setSelectedTransaction(transaction);
@@ -29,21 +25,18 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.balanceContainer}>
-        <Text style={styles.label}>Available Balance</Text>
-        <View style={styles.amountRow}>
-          <Text style={styles.balance}>{balance.toFixed(8)}</Text>
-          <Text style={styles.currency}> BTC</Text>
+      <View style={{ flexDirection: 'column', justifyContent: 'space-between' }}>
+        <AvailableBalance  />
+        <View style={styles.actionsContainer}>
+          <Button
+            title={balance > 0 ? 'Send Bitcoin' : 'Send your first bitcoin'}
+            onPress={handleSendPress}
+            icon="paperplane.fill"
+            size="sm"
+            fullWidth={false}
+            variant="rectangular"
+          />
         </View>
-        <Text style={styles.fiatValue}>≈ {usdValue}</Text>
-      </View>
-
-      <View style={styles.actionsContainer}>
-        <TouchableOpacity style={styles.sendButton} onPress={handleSendPress}>
-          <Text style={styles.sendButtonText}>
-            {balance > 0 ? 'Send Bitcoin' : 'Send your first bitcoin'}
-          </Text>
-        </TouchableOpacity>
       </View>
 
       <TransactionList 
@@ -91,51 +84,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.light.background,
   },
-  balanceContainer: {
-    alignItems: "center",
-    paddingVertical: 32,
-    paddingHorizontal: 20,
-  },
-  label: {
-    fontSize: 16,
-    color: Colors.light.icon,
-    marginBottom: 8,
-  },
-  amountRow: {
-    flexDirection: "row",
-    alignItems: "baseline",
-  },
-  balance: {
-    paddingTop: 10,
-    fontSize: 32,
-    fontWeight: "bold",
-  },
-  currency: {
-    fontSize: 20,
-    fontWeight: "500",
-    color: Colors.light.icon,
-  },
-  fiatValue: {
-    fontSize: 16,
-    color: Colors.light.icon,
-    marginTop: 8,
-  },
+
   actionsContainer: {
     paddingHorizontal: 20,
     marginBottom: 24,
-  },
-  sendButton: {
-    backgroundColor: Colors.light.tint,
-    height: 56,
-    borderRadius: 28,
-    justifyContent: "center",
-    alignItems: "center",
-    width: "100%",
-  },
-  sendButtonText: {
-    color: "#FFF",
-    fontSize: 16,
-    fontWeight: "600",
   },
   actionButton: {
     alignItems: "center",
