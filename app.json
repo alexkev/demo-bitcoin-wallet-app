@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "fold-take-home-scaffold",
-    "slug": "fold-take-home-scaffold",
+    "name": "demo-bitcoin-wallet",
+    "slug": "demo-bitcoin-wallet",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
