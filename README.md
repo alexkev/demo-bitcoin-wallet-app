@@ -10,6 +10,8 @@ You can run the app with:
 - React Native Reanimated for animations
 - Custom UI components with theme support
 
+<img src="./Simulator Screenshot - iPhone 15 Pro Max - 2025-11-03 at 16.56.25.png" alt="App Screenshot 1" width="300"/>
+
 ### 📱 App Features
 1. **Wallet Balance Display**: Real-time balance shown on home screen
 2. **Transaction History**: Complete list of all transactions with details
@@ -51,3 +53,5 @@ npm run ios
 - **Animations**: Coin animations for success/failure states
 - **Bitcoin Price Graph**: Line graph showing bitcoin price trends using react-native-svg-charts
 - Keyboard handling improvements for better UX on SendBitcoin screen
+
+
