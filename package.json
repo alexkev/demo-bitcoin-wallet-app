@@ -43,7 +43,8 @@
     "react-native-webview": "13.13.5",
     "swr": "^2.3.6",
     "tiny-secp256k1": "^2.2.3",
-    "zustand": "^5.0.8"
+    "zustand": "^5.0.8",
+    "@shopify/flash-list": "1.7.6"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

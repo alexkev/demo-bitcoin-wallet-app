@@ -4,9 +4,10 @@ import { AvailableBalance } from "@/components/wallet/AvailableBalance";
 import { useTheme } from '@/hooks/useTheme';
 import { useWalletStore } from '@/stores/useWalletStore';
 import { Transaction } from '@/types/wallet';
+import { FlashList } from '@shopify/flash-list';
 import { router } from "expo-router";
 import React from 'react';
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
 interface TransactionItemProps {
   transaction: Transaction;
@@ -111,7 +112,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
 
   return (
     <View style={styles.container}>
-      <FlatList
+      <FlashList
         ListHeaderComponent={
           <>
             <View style={{ flexDirection: 'column', justifyContent: 'space-between' }}>
@@ -132,7 +133,7 @@ export const TransactionList: React.FC<TransactionListProps> = ({
         data={transactions}
         renderItem={renderTransaction}
         keyExtractor={keyExtractor}
-        style={styles.list}
+        estimatedItemSize={94}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
         ListEmptyComponent={renderEmptyState}
